@@ -6,22 +6,22 @@
 
 main()
 {
-    int shmid;
-    key_t key;
-    char *shm, *s;
-    FILE *fptr;
+	int shmid;
+	key_t key;
+	char *shm, *s;
+	FILE *fptr;
 
 	fptr=fopen("digits.out","w");    //Write mode so that previous contents are removed
-    key = 888; // Random key 888 to identify the shared memory location
-    shmid = shmget(key, 27, 0666);  //locate the segment
-    shm = shmat(shmid, NULL, 0);   //attach segment to data space
-    while(1)//infinite loop
-	    {
-	    fptr=fopen("digits.out","a"); 
-	    int count=0; //Keeps track of the number of digits
-	    char copy[300]; //temporary location
-	    for (s = shm; *s !='\0'; s++) 
-		    {
+	key = 888; // Random key 888 to identify the shared memory location
+	shmid = shmget(key, 27, 0666);  //locate the segment
+	shm = shmat(shmid, NULL, 0);   //attach segment to data space
+	while(1)//infinite loop
+		{
+		fptr=fopen("digits.out","a"); 
+		int count=0; //Keeps track of the number of digits
+		char copy[300]; //temporary location
+		for (s = shm; *s !='\0'; s++) 
+			{
 			if (*s=='\n') //We don't want a new line between the line and the digit count
 				fprintf(fptr,"  --->"); 
 			else	
@@ -31,11 +31,11 @@ main()
 			}
 		fprintf(fptr,"%d\n",count); //Print count value next to the line in the file
 		strcpy(copy,shm); 
-	   	fclose(fptr); 
+		fclose(fptr); 
 		point1:
 		//Do nothing until new line is entered (value at shared memory location is changed)
-	    if (strcmp(copy,shm)==0)  
-	        goto point1;
-	    }
+		if (strcmp(copy,shm)==0)  
+			goto point1;
+		}
  
 }
